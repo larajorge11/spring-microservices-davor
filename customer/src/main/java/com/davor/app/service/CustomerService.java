@@ -1,22 +1,20 @@
 package com.davor.app.service;
 
-import com.davor.app.configuration.CustomerConfig;
 import com.davor.app.domain.Customer;
 import com.davor.app.domain.CustomerRegistrationRequest;
-import com.davor.app.domain.FraudCheckResponse;
+import com.davor.client.fraud.FraudCheckResponse;
+import com.davor.client.fraud.FraudClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CustomerService {
 
   private final CustomerRepository customerRepository;
-  private final RestTemplate restTemplate;
+  private final FraudClient fraudClient;
 
-  public CustomerService(CustomerRepository customerRepository,
-      RestTemplate restTemplate) {
+  public CustomerService(CustomerRepository customerRepository, FraudClient fraudClient) {
     this.customerRepository = customerRepository;
-    this.restTemplate = restTemplate;
+    this.fraudClient = fraudClient;
   }
 
   public void registerCustomer(CustomerRegistrationRequest customerRequest) {
@@ -36,16 +34,8 @@ but what happend if there are thousands of services, it's a headache if we copy 
         customer.getId()
     );
  */
-    FraudCheckResponse restTemplateForObject = restTemplate.getForObject(
-        "http://FRAUD/api/v1/fraud-check/{customerId}",
-        FraudCheckResponse.class,
-        customer.getId()
-    );
 
-
-    if (restTemplateForObject.isFraudster()) {
-      throw new IllegalStateException("fraudster");
-    }
+    FraudCheckResponse fraudClientFraudster = fraudClient.isFraudster(customer.getId());
 
   }
 }

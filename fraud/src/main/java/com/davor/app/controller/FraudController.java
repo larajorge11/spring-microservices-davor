@@ -1,12 +1,11 @@
 package com.davor.app.controller;
 
-import com.davor.app.model.FraudCheckResponse;
 import com.davor.app.service.FraudCheckService;
+import com.davor.client.fraud.FraudCheckResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
