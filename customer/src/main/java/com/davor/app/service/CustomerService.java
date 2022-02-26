@@ -2,20 +2,19 @@ package com.davor.app.service;
 
 import com.davor.app.domain.Customer;
 import com.davor.app.domain.CustomerRegistrationRequest;
-import com.davor.client.fraud.FraudCheckResponse;
 import com.davor.client.fraud.FraudClient;
+import com.davor.client.notification.MessageRequest;
+import com.davor.client.notification.NotificationClient;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class CustomerService {
 
   private final CustomerRepository customerRepository;
   private final FraudClient fraudClient;
-
-  public CustomerService(CustomerRepository customerRepository, FraudClient fraudClient) {
-    this.customerRepository = customerRepository;
-    this.fraudClient = fraudClient;
-  }
+  private final NotificationClient notificationClient;
 
   public void registerCustomer(CustomerRegistrationRequest customerRequest) {
     Customer customer = Customer.builder()
@@ -34,8 +33,14 @@ but what happend if there are thousands of services, it's a headache if we copy 
         customer.getId()
     );
  */
+    notificationClient.sendNotification(new MessageRequest
+        (
+            customer.getId(),
+            customer.getEmail(),
+            String.format("New customer has been created: %s-%s" , customer.getId(), customer.getFirstName())
+        )
+    );
 
-    FraudCheckResponse fraudClientFraudster = fraudClient.isFraudster(customer.getId());
-
+    fraudClient.isFraudster(customer.getId());
   }
 }

@@ -2,17 +2,14 @@ package com.davor.app.service;
 
 import com.davor.app.model.FraudCheckHistory;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class FraudCheckService {
 
   private final FraudCheckHistoryRepository fraudCheckHistoryRepository;
-
-  public FraudCheckService(
-      FraudCheckHistoryRepository fraudCheckHistoryRepository) {
-    this.fraudCheckHistoryRepository = fraudCheckHistoryRepository;
-  }
 
   public boolean isFraudulentCustomer(Integer customerId) {
     fraudCheckHistoryRepository.save(FraudCheckHistory
@@ -21,6 +18,7 @@ public class FraudCheckService {
         .isFraudster(false)
         .createdAt(LocalDateTime.now())
         .build());
+
     return false;
   }
 }
